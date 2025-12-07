@@ -1,0 +1,250 @@
+import java.util.*;
+
+public class CollectionsTasks {
+
+    // ===================== Завдання 1 =====================
+    // removeShorterStrings
+    public static void removeShorterStrings(List<String> list) {
+        if (list == null || list.size() < 2) return;
+
+        int lastPairStart = (list.size() % 2 == 0)
+                ? list.size() - 2
+                : list.size() - 3;
+
+        for (int i = lastPairStart; i >= 0; i -= 2) {
+            String first = list.get(i);
+            String second = list.get(i + 1);
+
+            if (first.length() <= second.length()) {
+                // видаляємо перший (і при рівних довжинах теж)
+                list.remove(i);
+            } else {
+                list.remove(i + 1);
+            }
+        }
+    }
+
+    // ===================== Завдання 2 =====================
+    // stutter
+    public static void stutter(List<String> list) {
+        int originalSize = list.size();
+        for (int i = 0; i < 2 * originalSize; i += 2) {
+            String s = list.get(i);
+            list.add(i, s);   // вставляємо копію перед оригіналом
+        }
+    }
+
+    // ===================== Завдання 3 =====================
+    // switchPairs
+    public static void switchPairs(List<String> list) {
+        for (int i = 0; i + 1 < list.size(); i += 2) {
+            String tmp = list.get(i);
+            list.set(i, list.get(i + 1));
+            list.set(i + 1, tmp);
+        }
+    }
+
+    // ===================== Завдання 4 =====================
+    // removeDuplicates (список відсортований)
+    public static void removeDuplicates(List<String> list) {
+        for (int i = list.size() - 1; i > 0; i--) {
+            if (list.get(i).equals(list.get(i - 1))) {
+                list.remove(i);
+            }
+        }
+    }
+
+    // ===================== Завдання 5 =====================
+    // markLength4
+    public static void markLength4(List<String> list) {
+        int i = 0;
+        while (i < list.size()) {
+            if (list.get(i).length() == 4) {
+                list.add(i, "****");
+                i += 2; // пропускаємо вставлений "****" і сам рядок
+            } else {
+                i++;
+            }
+        }
+    }
+
+    // ===================== Завдання 6 =====================
+    // isPalindrome (черга, допоміжний стек, черга має лишитися незмінною)
+    public static boolean isPalindrome(Queue<Integer> q) {
+        Deque<Integer> stack = new ArrayDeque<>();
+        int size = q.size();
+
+        // 1. Копіюємо елементи в стек, зберігаючи чергу
+        for (int i = 0; i < size; i++) {
+            int val = q.remove();
+            q.add(val);       // повертаємо назад для збереження порядку
+            stack.push(val);  // стек отримує елементи у зворотному порядку
+        }
+
+        // 2. Порівнюємо, одночасно знову зберігаючи порядок у черзі
+        boolean palindrome = true;
+        for (int i = 0; i < size; i++) {
+            int front = q.remove();
+            int top = stack.pop();
+            if (front != top) {
+                palindrome = false;
+            }
+            q.add(front); // відновлюємо чергу
+        }
+
+        return palindrome;
+    }
+
+    // ===================== Завдання 7 =====================
+    // reorder: відсортувати чергу за зростанням
+    // (використаємо допоміжний список + немає нових черг)
+    public static void reorder(Queue<Integer> q) {
+        List<Integer> list = new ArrayList<>(q);
+        Collections.sort(list);
+        q.clear();
+        q.addAll(list);
+    }
+
+    // ===================== Завдання 8 =====================
+    // rearrange: парні -> спочатку, непарні -> потім (порядок всередині груп зберігається)
+    public static void rearrange(Queue<Integer> q) {
+        List<Integer> evens = new ArrayList<>();
+        List<Integer> odds = new ArrayList<>();
+
+        while (!q.isEmpty()) {
+            int x = q.remove();
+            if (x % 2 == 0) evens.add(x);
+            else odds.add(x);
+        }
+
+        for (int x : evens) q.add(x);
+        for (int x : odds) q.add(x);
+    }
+
+    // ===================== Завдання 9 =====================
+    // maxLength(Set<String>)
+    public static int maxLength(Set<String> set) {
+        int max = 0;
+        for (String s : set) {
+            if (s.length() > max) {
+                max = s.length();
+            }
+        }
+        return max;
+    }
+
+    // ===================== Завдання 10 =====================
+    // removeEvenLength(Set<String>)
+    public static void removeEvenLength(Set<String> set) {
+        // створимо список ключів для безпечного видалення
+        List<String> toRemove = new ArrayList<>();
+        for (String s : set) {
+            if (s.length() % 2 == 0) {
+                toRemove.add(s);
+            }
+        }
+        set.removeAll(toRemove);
+    }
+
+    // ===================== Завдання 11 =====================
+    // numInCommon(List<Integer>, List<Integer>)
+    public static int numInCommon(List<Integer> a, List<Integer> b) {
+        Set<Integer> setA = new HashSet<>(a);
+        Set<Integer> setB = new HashSet<>(b);
+
+        setA.retainAll(setB); // перетин множин
+        return setA.size();
+    }
+
+    // ===================== Завдання 12 =====================
+    // isUnique(Map<String, String>)
+    public static boolean isUnique(Map<String, String> map) {
+        Set<String> values = new HashSet<>();
+        for (String val : map.values()) {
+            if (!values.add(val)) {
+                // add повертає false, якщо таке значення вже існує
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // ===================== Завдання 13 =====================
+    // intersect(Map<String,String>, Map<String,String>)
+    public static Map<String, String> intersect(Map<String, String> m1,
+                                               Map<String, String> m2) {
+
+        Map<String, String> result = new HashMap<>();
+
+        for (Map.Entry<String, String> e : m1.entrySet()) {
+            String key = e.getKey();
+            String value = e.getValue();
+            if (m2.containsKey(key) && value.equals(m2.get(key))) {
+                result.put(key, value);
+            }
+        }
+
+        return result;
+    }
+
+    // ===================== Завдання 14 =====================
+    // reverse(Map<Integer,String>) -> Map<String,Integer>
+    public static Map<String, Integer> reverse(Map<Integer, String> map) {
+        Map<String, Integer> result = new HashMap<>();
+
+        for (Map.Entry<Integer, String> e : map.entrySet()) {
+            Integer key = e.getKey();
+            String value = e.getValue();
+            // якщо value вже є, можемо перекрити попереднє значення - це допустимо
+            result.put(value, key);
+        }
+
+        return result;
+    }
+
+    // ===================== Завдання 15 =====================
+    // rarest(Map<String,Integer>)
+    public static int rarest(Map<String, Integer> map) {
+        if (map.isEmpty()) {
+            throw new IllegalArgumentException("Map is empty");
+        }
+
+        // рахуємо частоти значень
+        Map<Integer, Integer> freq = new HashMap<>();
+        for (Integer val : map.values()) {
+            freq.put(val, freq.getOrDefault(val, 0) + 1);
+        }
+
+        int bestValue = Integer.MAX_VALUE;
+        int bestCount = Integer.MAX_VALUE;
+
+        for (Map.Entry<Integer, Integer> e : freq.entrySet()) {
+            int value = e.getKey();
+            int count = e.getValue();
+
+            if (count < bestCount || (count == bestCount && value < bestValue)) {
+                bestCount = count;
+                bestValue = value;
+            }
+        }
+
+        return bestValue;
+    }
+
+    // ===================== Завдання 16 =====================
+    // maxOccurrences(List<Integer>)
+    public static int maxOccurrences(List<Integer> list) {
+        if (list.isEmpty()) return 0;
+
+        Map<Integer, Integer> freq = new HashMap<>();
+        int max = 0;
+
+        for (int x : list) {
+            int f = freq.getOrDefault(x, 0) + 1;
+            freq.put(x, f);
+            if (f > max) max = f;
+        }
+
+        return max;
+    }
+}
